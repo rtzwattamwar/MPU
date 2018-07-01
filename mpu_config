@@ -1,0 +1,32 @@
+understanding up till now: With MPU
+
+-ARM Cortex M3/M4 have single continuous 4GB of memory,
+ that we called as single space for kernel and application programs.
+
+-according to developer's requirements, we can divide that space into different segments/regions,
+ and those diff regions we can use for various purposes.
+
+-those regions can have their own attributes like-size, access permissions etc.
+
+-there are various peripherals of arm of which we can set permission to use those peripherals.
+
+example setup:
+
+-lets there are 3 regions and 2 tasks Task A, Task B.
+ Task A-Privileged
+ Task B-unprivileged
+
+1) with the help of MPU we can detect the stack leak as well as stack overflow and protect each task from each       other from accessing it.
+
+2) let us assume following is the setup for given region
+
+              | Privileged task    | unprivileded/user task | Region
+      case 1- |     Read/Write     |    No access           |    1
+      case 2- |     Read/Write     |    Read-only           |    2
+      case 3- |     Read/Write     |    Read/Write          |    3
+ 
+3) In case1 if Task B is tried to access/read/write the region 1 then memmang fault generates(provided it is         enabled)and this way the memory is protected from an unprivileged task.
+
+  -In case2 Task B can only read the data but cannot write into that memory according to the configuration, if       tried to access fault occurs.
+
+  -in case 3 both tasks having read and write permission so, there will be no protection required.
